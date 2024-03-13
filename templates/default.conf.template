@@ -1,0 +1,48 @@
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443;
+
+    server_name ${UPSTREAM_HOST};
+
+    ssl_certificate /etc/nginx/certs/localhost+2.pem;
+    ssl_certificate_key /etc/nginx/certs/localhost+2-key.pem;
+
+    ssl_prefer_server_ciphers on;
+
+    ssl_session_timeout 5m;
+
+    location / {
+        if ($http_origin = "") {
+            return 400 "400 Bad Request\nRequests must set the Origin header.\n";
+        }
+
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Headers' 'Authorization,Accept,Origin,DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range' always;
+            add_header 'Access-Control-Allow-Methods' 'GET,POST,OPTIONS,PUT,DELETE,PATCH' always;
+            add_header 'Access-Control-Max-Age' 1728000 always;
+            add_header 'Content-Type' 'text/plain charset=UTF-8' always;
+            add_header 'Content-Length' 0 always;
+            return 204;
+        }
+
+        #proxy_redirect off;
+        proxy_set_header Host ${UPSTREAM_APP};
+        proxy_set_header X-real-ip $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_ssl_name ${UPSTREAM_HOST};
+        proxy_ssl_server_name on;
+        #proxy_ssl_session_reuse off;
+
+        proxy_pass ${UPSTREAM_PROTOCOL}://${UPSTREAM_APP}:${UPSTREAM_PORT}/;
+
+        # Websockets
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+    }
+}

@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  nginx:
+    image: nginx:1.25.4-bookworm
+    restart: unless-stopped
+    ports:
+      - "8443:443"
+    volumes:
+      - ./templates:/etc/nginx/templates
+      - ./certs:/etc/nginx/certs
+    environment:
+      - UPSTREAM_HOST=${UPSTREAM_HOST:-}
+      - UPSTREAM_APP=${UPSTREAM_APP:-}
+      - UPSTREAM_PORT=${UPSTREAM_PORT:-}
+      - UPSTREAM_PROTOCOL=${UPSTREAM_PROTOCOL:-}
