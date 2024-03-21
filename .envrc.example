@@ -2,3 +2,4 @@ export UPSTREAM_HOST=example.com
 export UPSTREAM_APP=api.$UPSTREAM_HOST
 export UPSTREAM_PORT=443
 export UPSTREAM_PROTOCOL=https
+export ORIGIN_URI=https://localhost:8080
