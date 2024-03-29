@@ -1,5 +1,7 @@
 # CORS Proxy with Websockets and SSL
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 ## Generate certificates
 
 ### MKCert
@@ -34,3 +36,7 @@ You'll need to set `--disable-web-security` flag when launching your Chrome/Chro
 ### TUS
 
 This proxy is not compatible with TUS protocol since OPTIONS responses are hardcoded within the proxy.
+
+## Possible improvments
+
+See https://github.com/justsml/ssl-proxy
